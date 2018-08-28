@@ -1,549 +1,89 @@
-# exporter-node configuration
-deployExporterNode: True
-
-# Grafana
-deployGrafana: False
-grafana:
-  nodeSelector: {}
-
-  ## Tolerations for use with node taints
-  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-  ##
-  tolerations: {}
-    #  - key: "key"
-    #    operator: "Equal"
-    #    value: "value"
-    #    effect: "NoSchedule"
-
-  annotations: {}
-
-  ## If true, create a serviceMonitor for grafana
-  ##
-  selfServiceMonitor: true
-  ## Custom Labels to be added to ServiceMonitor
-  ##
-  additionalServiceMonitorLabels: {}
-
-  ## If true, create & use RBAC resources resp. Pod Security Policies
-  ##
-  global:
-    rbacEnable: true
-    pspEnable: true
-
-  ## Pass extra environment variables to the Grafana container.
-  ##
-  # extraVars:
-  # - name: EXTRA_VAR_1
-  #   value: extra-var-value-1
-  # - name: EXTRA_VAR_2
-  #   value: extra-var-value-2
-  extraVars:
-
-  ## Change to true override Grafana's default config.
-  ## Make sure grafana.ini is present on /etc/grafana
-  mountGrafanaConfig: false
-
-  adminUser: "admin"
-  adminPassword: "admin"
-
-  service:
-
-    ## Annotations to be added to the Service
-    ##
-    annotations: {}
-
-    ## Cluster-internal IP address for Alertmanager Service
-    ##
-    clusterIP: ""
-
-    ## List of external IP addresses at which the Alertmanager Service will be available
-    ##
-    externalIPs: []
-
-    ## External IP address to assign to Alertmanager Service
-    ## Only used if service.type is 'LoadBalancer' and supported by cloud provider
-    ##
-    loadBalancerIP: ""
-
-    ## List of client IPs allowed to access Alertmanager Service
-    ## Only used if service.type is 'LoadBalancer' and supported by cloud provider
-    ##
-    loadBalancerSourceRanges: []
-
-    ## Port to expose on each node
-    ## Only used if service.type is 'NodePort'
-    ##
-    nodePort: 30902
-
-    ## Service type
-    ##
-    type: ClusterIP
-
-  ## Grafana Docker image
-  ##
-  image:
-    repository: grafana/grafana
-    tag: 5.0.0
-
-  grafanaWatcher:
-    repository: quay.io/coreos/grafana-watcher
-    tag: v0.0.8
-
-  storageSpec: {}
-  #   class: default
-  #   accessMode:
-  #   resources:
-  #     requests:
-  #       storage: 2Gi
-  #   selector: {}
-
-  resources: {}
-    # requests:
-    #   memory: 400Mi
-
-  ingress:
-    ## If true, Grafana Ingress will be created
-    ##
-    enabled: false
-
-    ## Annotations for Alertmanager Ingress
-    ##
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-
-    ## Labels to be added to the Ingress
-    ##
-    labels: {}
-
-    ## Hostnames.
-    ## Must be provided if Ingress is enabled.
-    ##
-    # hosts:
-    #   - grafana.domain.com
-    hosts: []
-
-    ## TLS configuration for Alertmanager Ingress
-    ## Secret must be manually created in the namespace
-    ##
-    tls: []
-      # - secretName: alertmanager-general-tls
-      #   hosts:
-      #     - alertmanager.example.com
-
-
-
-  # Set datasource in beginning
-  dataSource: {}
-
-  ## A list of additional configmaps that contain -dashboard.json and/or -datasource.json files
-  ## that should be imported into grafana.
-  serverDashboardConfigmaps: []
-
-  serverDashboardFiles: {}
-
-  ## Keep the Dashboards that are defined in this HELM chart
-  keepOriginalDashboards: true
-
-  ## Keep the Datasources that are defined in this HELM chart
-  keepOriginalDatasources: true
-
-  auth:
-    anonymous:
-      enabled: "true"
-###example howto use notification, now we use grafana alerts instead
-# alertmanager:
-#   ## Alertmanager configuration directives
-#   ## Ref: https://prometheus.io/docs/alerting/configuration/
-#   ##
-#   config:
-#     # global:
-#     #   resolve_timeout: 5m
-#     # route:
-#     #   group_by: ['job']
-#     #   group_wait: 30s
-#     #   group_interval: 5m
-#     #   repeat_interval: 12h
-#     #   receiver: 'null'
-#     #   routes:
-#     #   - match:
-#     #       alertname: DeadMansSwitch
-#     #     receiver: 'null'
-#     # receivers:
-#     # - name: 'null'
-#     global:
-#       resolve_timeout: 5m
-#     receivers:
-#     - name: "slack_general"
-#       slack_configs:
-#       - api_url: https://hooks.slack.com/services/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
-#         channel: '#alerts'
-#     route:
-#       group_by:
-#       - job
-#       group_interval: 5m
-#       group_wait: 30s
-#       receiver: "slack_general"
-#       repeat_interval: 12h
-#       routes:
-#       - match:
-#           alertname: Attantion
-#         receiver: "slack_general"
-#
-## If true, create & use RBAC resources
-##
-
-alertmanager:
-  ## Alertmanager configuration directives
-  ## Ref: https://prometheus.io/docs/alerting/configuration/
-  ##
-  config:
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus
+  namespace: metrics
+data:
+  prometheus.yml: |-
     global:
-      resolve_timeout: 5m
-    route:
-      group_by: ['job']
-      group_wait: 30s
-      group_interval: 5m
-      repeat_interval: 12h
-      receiver: 'null'
-      routes:
-      - match:
-          alertname: DeadMansSwitch
-        receiver: 'null'
-    receivers:
-    - name: 'null'
+      scrape_interval: 15s
+    scrape_configs:
 
-  ## External URL at which Alertmanager will be reachable
-  ##
-  externalUrl: ""
+    - job_name: 'istio-mesh'
+      # Override the global default and scrape targets from this job every 5 seconds.
+      scrape_interval: 5s
+      # metrics_path defaults to '/metrics'
+      # scheme defaults to 'http'.
+      static_configs:
+      - targets: ['istio-mixer.metrics:42422']
 
-  ## Alertmanager container image
-  ##
-  image:
-    repository: quay.io/prometheus/alertmanager
-    tag: v0.9.1
+    - job_name: 'envoy'
+      # Override the global default and scrape targets from this job every 5 seconds.
+      scrape_interval: 5s
+      # metrics_path defaults to '/metrics'
+      # scheme defaults to 'http'.
+      static_configs:
+      - targets: ['istio-mixer.metrics:9102']
 
-  ingress:
-    ## If true, Alertmanager Ingress will be created
-    ##
-    enabled: false
-
-    ## Annotations for Alertmanager Ingress
-    ##
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-
-    hosts: ""
-
-    ## TLS configuration for Alertmanager Ingress
-    ## Secret must be manually created in the namespace
-    ##
-    tls: []
-      # - secretName: alertmanager-general-tls
-      #   hosts:
-      #     - alertmanager.example.com
-
-  ## Node labels for Alertmanager pod assignment
-  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
-  ##
-  nodeSelector: {}
-
-  ## If true, the Operator won't process any Alertmanager configuration changes
-  ##
-  paused: false
-
-  ## Number of Alertmanager replicas desired
-  ##
-  replicaCount: 1
-
-  ## Pod anti-affinity can prevent the scheduler from placing Alertmanager replicas on the same node.
-  ## The default value "soft" means that the scheduler should *prefer* to not schedule two replica pods onto the same node but no guarantee is provided.
-  ## The value "hard" means that the scheduler is *required* to not schedule two replica pods onto the same node.
-  ## The value "" will disable pod anti-affinity so that no anti-affinity rules will be configured.
-  podAntiAffinity: "soft"
-
-  ## Resource limits & requests
-  ## Ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ##
-  resources: {}
-    # requests:
-    #   memory: 400Mi
-
-  service:
-    ## Annotations to be added to the Service
-    ##
-    annotations: {}
-
-    ## Cluster-internal IP address for Alertmanager Service
-    ##
-    clusterIP: ""
-
-    ## List of external IP addresses at which the Alertmanager Service will be available
-    ##
-    externalIPs: []
-
-    ## External IP address to assign to Alertmanager Service
-    ## Only used if service.type is 'LoadBalancer' and supported by cloud provider
-    ##
-    loadBalancerIP: ""
-
-    ## List of client IPs allowed to access Alertmanager Service
-    ## Only used if service.type is 'LoadBalancer' and supported by cloud provider
-    ##
-    loadBalancerSourceRanges: []
-
-    ## Port to expose on each node
-    ## Only used if service.type is 'NodePort'
-    ##
-    nodePort: 30903
-
-    ## Service type
-    ##
-    type: ClusterIP
-
-  ## Alertmanager StorageSpec for persistent data
-  ## Ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/storage.md
-  ##
-  storageSpec: {}
-  #   class: default
-  #   resources:
-  #     requests:
-  #       storage: 2Gi
-  #   selector: {}
-
-rbacEnable: true
-
-prometheus:
-  ## Alertmanagers to which alerts will be sent
-  ## Ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#alertmanagerendpoints
-  ##
-  alertingEndpoints: []
-  #   - name: ""
-  #     namespace: ""
-  #     port: 9093
-  #     scheme: http
-
-  ## Prometheus configuration directives
-  ## Ignored if serviceMonitors are defined
-  ## Ref: https://prometheus.io/docs/operating/configuration/
-  ##
-  config:
-    specifiedInValues: true
-    value: {}
-
-  ## External URL at which Prometheus will be reachable
-  ##
-  externalUrl: ""
-
-  ## Prometheus container image
-  ##
-  image:
-    repository: quay.io/prometheus/prometheus
-    tag: v2.0.0
-
-  ingress:
-    ## If true, Prometheus Ingress will be created
-    ##
-    enabled: false
-
-    ## Annotations for Prometheus Ingress
-    ##
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-
-    hosts: ""
-
-    ## TLS configuration for Prometheus Ingress
-    ## Secret must be manually created in the namespace
-    ##
-    tls: []
-      # - secretName: prometheus-k8s-tls
-      #   hosts:
-      #     - prometheus.example.com
-
-  ## Node labels for Prometheus pod assignment
-  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
-  ##
-  nodeSelector: {}
-
-  ## If true, the Operator won't process any Prometheus configuration changes
-  ##
-  paused: false
-
-  ## Number of Prometheus replicas desired
-  ##
-  replicaCount: 1
-
-  ## Resource limits & requests
-  ## Ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ##
-  resources: {}
-    # requests:
-    #   memory: 400Mi
-
-  ## How long to retain metrics
-  ##
-  retention: 24h
-
-  ## Prefix used to register routes, overriding externalUrl route.
-  ## Useful for proxies that rewrite URLs.
-  ##
-  routePrefix: /
-
-  ## Rules configmap selector
-  ## Ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/design.md
-  ##
-  rulesSelector: {}
-
-  ## Prometheus alerting & recording rules
-  ## Ref: https://prometheus.io/docs/querying/rules/
-  ## Ref: https://prometheus.io/docs/alerting/rules/
-  ##
-  rules:
-    specifiedInValues: true
-    value: {}
-
-  service:
-    ## Annotations to be added to the Service
-    ##
-    annotations: {}
-
-    ## Cluster-internal IP address for Prometheus Service
-    ##
-    clusterIP: ""
-
-    ## List of external IP addresses at which the Prometheus Service will be available
-    ##
-    externalIPs: []
-
-    ## External IP address to assign to Prometheus Service
-    ## Only used if service.type is 'LoadBalancer' and supported by cloud provider
-    ##
-    loadBalancerIP: ""
-
-    ## List of client IPs allowed to access Prometheus Service
-    ## Only used if service.type is 'LoadBalancer' and supported by cloud provider
-    ##
-    loadBalancerSourceRanges: []
-
-    ## Port to expose on each node
-    ## Only used if service.type is 'NodePort'
-    ##
-    nodePort: 30900
-
-    ## Service type
-    ##
-    type: ClusterIP
-
-  ## Service monitors selector
-  ## Ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/design.md
-  ##
-  serviceMonitorsSelector: {}
-
-  ## ServiceMonitor CRDs to create & be scraped by the Prometheus instance.
-  ## Ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/service-monitor.md
-  ##
-  serviceMonitors: []
-    ## Name of the ServiceMonitor to create
-    ##
-    # - name: ""
-
-      ## Service label for use in assembling a job name of the form <label value>-<port>
-      ## If no label is specified, the service name is used.
-      ##
-      # jobLabel: ""
-
-      ## Label selector for services to which this ServiceMonitor applies
-      ##
-      # selector: {}
-
-      ## Namespaces from which services are selected
-      ##
-      # namespaceSelector:
-        ## Match any namespace
-        ##
-        # any: false
-
-        ## Explicit list of namespace names to select
-        ##
-        # matchNames: []
-
-      ## Endpoints of the selected service to be monitored
-      ##
-      # endpoints: []
-        ## Name of the endpoint's service port
-        ## Mutually exclusive with targetPort
-        # - port: ""
-
-        ## Name or number of the endpoint's target port
-        ## Mutually exclusive with port
-        # - targetPort: ""
-
-        ## File containing bearer token to be used when scraping targets
-        ##
-        #   bearerTokenFile: ""
-
-        ## Interval at which metrics should be scraped
-        ##
-        #   interval: 30s
-
-        ## HTTP path to scrape for metrics
-        ##
-        #   path: /metrics
-
-        ## HTTP scheme to use for scraping
-        ##
-        #   scheme: http
-
-        ## TLS configuration to use when scraping the endpoint
-        ##
-        #   tlsConfig:
-
-            ## Path to the CA file
-            ##
-            # caFile: ""
-
-            ## Path to client certificate file
-            ##
-            # certFile: ""
-
-            ## Skip certificate verification
-            ##
-            # insecureSkipVerify: false
-
-            ## Path to client key file
-            ##
-            # keyFile: ""
-
-            ## Server name used to verify host name
-            ##
-            # serverName: ""
-
-  ## Prometheus StorageSpec for persistent data
-  ## Ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/storage.md
-  ##
-  storageSpec:
-    volumeClaimTemplate:
-      spec:
-        resources:
-          requests:
-            storage: 1000Gi
-    selector: {}
-# default rules are in templates/general.rules.yaml
-# prometheusRules: {}
-exporter-kube-etcd:
-  # on what port are the metrics exposed by etcd. Use port 2379 for https
-  etcdPort:  2379
-  # for deployments that have etcd deployed outside of the cluster, list their adresses here
-  endpoints: []
-  # Are we talking http or https?
-  scheme: http
-  # default rules are in templates/etcd3.rules.yaml
-  # prometheusRules: {}
-
-  # TLS Cofiguration for the service monitor, default to none, but append cert and keyfile if passed
-  caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-  certFile: ""
-  keyFile: ""
+    - job_name: 'mixer'
+      # Override the global default and scrape targets from this job every 5 seconds.
+      scrape_interval: 5s
+      # metrics_path defaults to '/metrics'
+      # scheme defaults to 'http'.
+      static_configs:
+      - targets: ['istio-mixer.metrics:9093']
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/scrape: 'true'
+  labels:
+    name: prometheus
+  name: prometheus
+  namespace: metrics
+spec:
+  selector:
+    app: prometheus
+  ports:
+  - name: prometheus
+    protocol: TCP
+    port: 9090
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: metrics
+  annotations:
+    sidecar.istio.io/inject: "false"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      name: prometheus
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image: docker.io/prom/prometheus:v2.0.0
+        imagePullPolicy: IfNotPresent
+        args:
+          - '--storage.tsdb.retention=6h'
+          - '--config.file=/etc/prometheus/prometheus.yml'
+        ports:
+        - name: web
+          containerPort: 9090
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/prometheus
+      volumes:
+      - name: config-volume
+        configMap:
+          name: prometheus
+---

@@ -1,102 +1,52 @@
-nodeSelector: {}
-
-annotations: {}
-
-adminUser: "metrics"
-adminPassword: "cortex.1"
-
-service:
-
-  ## Annotations to be added to the Service
-  ##
-  annotations: {}
-
-  ## Cluster-internal IP address for Alertmanager Service
-  ##
-  clusterIP: ""
-
-  ## List of external IP addresses at which the Alertmanager Service will be available
-  ##
-  externalIPs: []
-
-  ## External IP address to assign to Alertmanager Service
-  ## Only used if service.type is 'LoadBalancer' and supported by cloud provider
-  ##
-  loadBalancerIP: ""
-
-  ## List of client IPs allowed to access Alertmanager Service
-  ## Only used if service.type is 'LoadBalancer' and supported by cloud provider
-  ##
-  loadBalancerSourceRanges: []
-
-  ## Port to expose on each node
-  ## Only used if service.type is 'NodePort'
-  ##
-  nodePort: 30902
-
-  ## Service type
-  ##
-  type: ClusterIP
-
-## Grafana Docker image
-##
-image:
-  repository: grafana/grafana
-  tag: 4.6.3
-
-grafanaWatcher:
-  repository: quay.io/coreos/grafana-watcher
-  tag: v0.0.8
-
-storageSpec:
-  class: default
-  accessMode: ReadWriteOnce
-  resources:
-    requests:
-      storage: 16Gi
-  selector: {}
-
-resources: {}
-  # requests:
-  #   memory: 400Mi
-
-ingress:
-  ## If true, Grafana Ingress will be created
-  ##
-  enabled: false
-
-  ## Annotations for Alertmanager Ingress
-  ##
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-
-  fqdn: "grafana.dev.usinnovation.io"
-
-  ## TLS configuration for Alertmanager Ingress
-  ## Secret must be manually created in the namespace
-  ##
-  tls: []
-    # - secretName: alertmanager-general-tls
-    #   hosts:
-    #     - alertmanager.example.com
-
-
-
-# Set datasource in beginning
-dataSource: {}
-# dataSource:
-#   prometheus-datasource:
-#     access: "proxy"
-#     basicAuth: false
-#     name: "prometheus"
-#     type: "prometheus"
-#     url: "http://kube-prometheus-prometheus:9090"
-#   influxdb-datasource:
-#     access: "proxy"
-#     basicAuth: false
-#     name: "InfluxDB"
-#     type: "InfluxDB"
-#     url: "http://influxdb-influxdb:8086"
-
-serverDashboardFiles: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: metrics
+spec:
+  ports:
+  - port: 3000
+    protocol: TCP
+    name: http
+  selector:
+    app: grafana
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: metrics
+  annotations:
+    sidecar.istio.io/inject: "false"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: docker.io/istio/grafana:0.4.0
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 3000
+        env:
+        - name: GRAFANA_PORT
+          value: "3000"
+        - name: GF_AUTH_BASIC_ENABLED
+          value: "false"
+        - name: GF_AUTH_ANONYMOUS_ENABLED
+          value: "true"
+        - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+          value: Admin
+        - name: GF_PATHS_DATA
+          value: /data/grafana
+        volumeMounts:
+        - mountPath: /data/grafana
+          name: grafana-data
+      volumes:
+      - name: grafana-data
+        emptyDir: {}
+---
