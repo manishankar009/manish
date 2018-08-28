@@ -1,0 +1,23 @@
+config:
+  ## Email address to use for registration with Let's Encrypt
+  ##
+  LEGO_EMAIL: postmaster@usinnovation.io
+  LEGO_SUPPORTED_INGRESS_CLASS: nginx-ext
+  LEGO_DEFAULT_INGRESS_CLASS: nginx-ext
+  # LEGO_SUPPORTED_INGRESS_CLASS: nginx-ext,nginx-int
+  LEGO_SUPPORTED_INGRESS_PROVIDER: nginx
+  # LEGO_URL: https://acme-v01.api.letsencrypt.org/directory
+
+image:
+  tag: canary
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 300Mi
+  limits:
+    cpu: 100m
+    memory: 300Mi
+
+# rbac:
+#   create: true

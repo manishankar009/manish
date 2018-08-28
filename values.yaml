@@ -1,0 +1,1899 @@
+## Default values for Cortex Helm Chart.
+## This is a YAML-formatted file.
+## Declare variables to be passed into your templates.
+
+## Override the name of the Chart.
+##
+# nameOverride:
+
+imagePullPolicy: Always
+
+## Configure Revision History Limit for Deployment
+## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#revision-history-limit
+##
+# revisionHistoryLimit:
+
+## Configure private Docker registry
+##
+dockerconfigjson: ""
+
+
+## Configuration values for Cortex
+##
+cortex:
+  appinsights:
+    analytics_ui: ""
+    analytics_worker: ""
+    auditlog: ""
+    bundle: ""
+    client: ""
+    datarequest: ""
+    engagement: ""
+    espresso: ""
+    extraction_ui: ""
+    informatica: ""
+    notification: ""
+    prep_orchestrator: ""
+    security: ""
+    sftp: ""
+    staging: ""
+    workpaper: ""
+    corptax: ""
+    jobserver: ""
+    scheduler: ""
+    broker: ""
+
+  node_tls_reject_unauth: 0
+  instrumentationkey: ""
+  sds_url: ""
+  gcsspreadkey_corptax: "tax.d.cortex.deloitte.com|tax.l.cortex.deloitte.com|tax.q.cortex.deloitte.com|tax.s.cortex.deloitte.com|tax.prod.cortex.deloitte.com|tax.load.usinnovation.io|tax.qa.usinnovation.io|tax.dev.usinnovation.io,369638713138473#A00pDGblRmL8VGdy36YuwmL8FGds46bj9SZ4RXavxWZk9CelRncvNmLk9CehRnI0IyctRkIsISZ4RXavxWZEJiOiEmTDJCLiMzN4gzMxMTM7gzM6kjNzIiOiQWSiwSflNHbhZmOiI7ckJye0ICbuFkI1pjIEJCLi4TPnV6dLNHVJZkUERnTLV7Q7wEMDBjUIR7T5NDUXBzLip5YXV5LThDOvknTPR4MwQUSp5UO9cTTp5EZwVGOWJWOlJmMHBDcJR4azhXTBtGeLR6YxYFW9hkI0IyUiwiMykDM6ITNzUTM0IicfJye&Qf35VfiMjY6cmI0IyQiwiIxEjL6ByUKBCZhVmcwNlI0IiTis7W0ICZyBlIsIyNwgTM5ADIwIjMwgTMwIjI0ICdyNkIsIybp9ibvlGdhZ7bu9WazVnL6VGZugXY4xybp9ibvlGdhZ7bu9WazVnLhFnL8FGds2Wau86bpRXY63mbul6c59CZh3GbugXY4xSbvNmLlRHdp3GblRmL8VGdy36YuQ6byBnL8FGds46bj9SZ4RXavxWZk9CelRncvNmLz9CehRHLt36YuUGd4l6bsVGZugXZ4J7bj9ScugXY4xSbvNmrllH"
+  x509: "false"
+  omniture_account: ""
+  notify_email: "ubagampalli@deloitte.com"
+  #this value will be in pipeline in vsts
+  internal_balancer_ip: "127.0.0.1"
+  external_balancer_ip: "127.0.0.1"
+  metrics_balancer_ip: "127.0.0.1"
+  restricted_balancer_ip: "127.0.0.1"
+  deloitte: "false"
+  #set CA_CERT
+  ca: "certificate must be here"
+  # Set stage
+  taxplatform: "must be here in key vault"
+  taxplatform_url: "must be in key vault"
+  taxplatform_client: "must be in key vault"
+
+  env: ""
+
+  stage: qa
+
+  # Set environmnet for ASP.NET
+  aspnetcore_environment: Qa
+
+  # Set domain
+  domain: ""
+
+  # Set app names for frontend application
+  app_name1: ""
+  app_name2: ""
+  app_name3: ""
+  app_name4: ""
+  app_name5: ""
+  app_name6: ""
+
+  # Set product
+  product: ""
+
+  # Set SubscriptionId
+  subscription_id: ""
+
+  # Set resource group
+  resource_group: ""
+
+  # Main SP (serivce principal)
+  sp:
+    tenant: ""
+    client_id: ""
+    client_secret: ""
+    cert: ""
+    cert_password: ""
+
+  # Main SP2 (serivce principal)
+  sp2:
+    tenant: ""
+    client_id: ""
+    client_secret: ""
+    cert: ""
+    cert_password: ""
+
+  # AD app (service principal) for auth
+  # this could be different from main SP
+  auth:
+    tenant: ""
+    client_id: ""
+    client_secret: ""
+
+  docker:
+    registry: ""
+
+  # Mongo settings:
+  mongo:
+    host: "{}"
+    username: ""
+    password: ""
+    admin_password: ""
+    rs: rs0
+    replicas: 3
+    port: 27017
+
+    auth:
+      enabled: true
+      # adminUser: username
+      # adminPassword: password
+      key: ""
+      # existingKeySecret:
+      # existingAdminSecret:
+
+    # Specs for the Docker image for the init container that establishes the replica set
+    installImage:
+      name: gcr.io/google_containers/mongodb-install
+      tag: 0.5
+      pullPolicy: IfNotPresent
+
+    # Specs for the MongoDB image
+    image:
+      name: mongo-enterprise
+      tag: 0.0.1
+      pullPolicy: IfNotPresent
+
+    # Annotations to be added to MongoDB pods
+    podAnnotations: {}
+
+    podAntiAffinity: "soft"
+
+    resources: {}
+    # limits:
+    #   cpu: 500m
+    #   memory: 512Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 256Mi
+
+    persistentVolume:
+      enabled: true
+      ## mongodb-replicaset data Persistent Volume Storage Class
+      ## If defined, storageClassName: <storageClass>
+      ## If set to "-", storageClassName: "", which disables dynamic provisioning
+      ## If undefined (the default) or set to null, no storageClassName spec is
+      ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+      ##   GKE, AWS & OpenStack)
+      ##
+      storageClass: "managed-premium"
+      accessModes:
+        - ReadWriteOnce
+      size: 1000Gi
+      annotations: {}
+
+    # Annotations to be added to the service
+    serviceAnnotations: {}
+
+    tls:
+      # Enable or disable MongoDB TLS support
+      enabled: true
+      # Please generate your own TLS CA by generating it via:
+      # $ openssl genrsa -out ca.key 2048
+      # $ openssl req -x509 -new -nodes -key ca.key -days 10000 -out ca.crt -subj "/CN=mydomain.com"
+      # After that you can base64 encode it and paste it here:
+      # $ cat ca.key | base64 -w0
+      # cacert:
+      # cakey:
+
+    # Entries for the MongoDB config file
+    configmap:
+      storage:
+        journal:
+          enabled: true
+        engine: wiredTiger
+        dbPath: /data/db
+      net:
+        bindIpAll: true
+        port: 27017
+        # Uncomment for TLS support
+        ssl:
+          mode: allowSSL
+          CAFile: /ca/tls.crt
+          PEMKeyFile: /work-dir/mongo.pem
+      replication:
+        replSetName: rs0
+      systemLog:
+         verbosity: 1
+         quiet: false
+         traceAllExceptions: false
+         syslogFacility: user
+         timeStampFormat: ctime
+         component:
+            accessControl:
+               verbosity: 2
+      # Uncomment for TLS support or keyfile access control without TLS
+      security:
+        authorization: enabled
+        keyFile: /keydir/key.txt
+        encryptionKeyFile: /keydir/mongodb-stor-keyfile
+        encryptionCipherMode: AES256-CBC
+        enableEncryption: true
+    cert:
+      tradechain_web: ""
+      tradechain_workpaper: ""
+      corptax: ""
+      analytics_ui: ""
+      auditlog: ""
+      bundle: ""
+      client: ""
+      datarequest: ""
+      engagement: ""
+      espresso: ""
+      broker: ""
+      informatica: ""
+      notification: ""
+      prep_orchestrator: ""
+      security: ""
+      staging: ""
+      workpaper: ""
+  mssql_encrypt:
+    key: ""
+# MySQL settings:
+  mysql:
+    replicas: 3
+    image: "mysql"
+    imageTag: "5.7.21"
+
+    # nameOverride:
+
+    host: ""
+    password: "" # root password
+
+    jobserver:
+      cert: ""
+
+    ca: ""
+    cert: ""
+    key: ""
+
+    replUsername: ""
+    replPassword: ""
+
+    jobserverUsername: ""
+    jobserverPassword: ""
+
+    informaticaUsername: ""
+    informaticaPassword: ""
+
+    monitoringUsername: ""
+    monitoringPassword: ""
+
+    cortexadminUsername: ""
+    cortexadminPassword: ""
+
+    cortexbackupUsername: ""
+    cortexbackupPassword: ""
+
+    encrypt_mysql_key: ""
+
+    imagePullPolicy: IfNotPresent
+
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 100m
+
+    persistence:
+      enabled: true
+      # changes this size big for production
+      size: 1000Gi
+      storageClass: managed-premium
+# MySQL dump settings:
+  mysqldump:
+    image: "mysqldump"
+    imageTag: "0.1.30"
+
+    # nameOverride:
+
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 100m
+
+    persistence:
+      enabled: true
+      # changes this size big for production
+      size: 1000Gi
+      storageClass: managed-premium
+
+# MongoDB dump settings:
+  mongodump:
+    user: Backup
+    image: "mongodump"
+    imageTag: "0.1.21"
+
+    # nameOverride:
+
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 100m
+
+    persistence:
+      enabled: true
+      # changes this size big for production
+      size: 1000Gi
+      storageClass: managed-premium
+
+  # Rabbitmq settings:
+  rabbit:
+
+    ## Number of replicas.
+    ##
+    replicas: 3
+    image:
+      repository: rabbitmq
+      tag: 3.7.4
+    rabbitmqVhost: /
+    # nameOverride:
+    erlangcookie:
+    logLevel: info
+    # ssl part
+
+
+    password: ""
+
+    persistence:
+      enabled: true
+      size: 1000Gi
+      storageClass: managed-premium
+
+    serviceType: ClusterIP
+
+    host: ""
+    username: ""
+    password: ""
+    cert:
+      server: ""
+      key: ""
+      admin: ""
+      analytics_ui: ""
+      corptax: ""
+      auditlog: ""
+      broker: ""
+      bundle: ""
+      client: ""
+      datarequest: ""
+      engagement: ""
+      informatica: ""
+      notification: ""
+      prep_orchestrator: ""
+      security: ""
+      staging: ""
+      workpaper: ""
+
+  # Mat
+  mat:
+    host: ""
+    db: ""
+    username: ""
+    password: ""
+
+  # Redis
+  redis:
+    host: ""
+    password: ""
+    cert:
+      analytics_ui: ""
+      prep_orchestrator: ""
+      datarequest: ""
+      engagement: ""
+      informatica: ""
+      staging: ""
+
+  mssql_eng:
+    host: ""
+    pool: ""
+    username: ""
+    password: ""
+
+  mssql_int:
+    host: ""
+    pool: ""
+    username: ""
+    password: ""
+
+  informatica:
+    host: ""
+    app: ""
+    passwordkey: ""
+    admin: ""
+    adminpassword: ""
+    org: ""
+
+  storage:
+    name: ""
+    key: ""
+
+  sap:
+    host: ""
+    username: ""
+    password: ""
+    systemId: "00"
+    clientNumber: "100"
+    language: "en"
+    files:
+      SAPDataFilePath: "F:\\usr\\sap\\trans\\data\\"
+      SAPCOFilePath: "F:\\usr\\sap\\trans\\cofiles\\"
+      CortexDataFilePath: "\\\\uscortexsap\\sapmnt\\trans\\data\\"
+      CortexCOFilePath: "\\\\uscortexsap\\sapmnt\\trans\\cofiles\\"
+      PackageName: "Z001"
+
+  sftp:
+    passwordkey: ""
+
+  tableau:
+    host: ""
+    username: ""
+    password: ""
+    audience: ""
+    cert: ""
+    cl_role: ""
+    engagement_role: ""
+
+  spark:
+    account: ""
+    username: ""
+    password: ""
+    app: "sjs-test"
+
+  datalake:
+    account: ""
+    client_id: ""
+    client_secret: ""
+    tenant: ""
+
+  artifactory:
+    # host: "40.70.2.83"
+    host: "10.152.99.6" # hardcoded ip for prod artifactory vm
+    url: ""
+    username: ""
+    password: ""
+
+  exum:
+    exum_flag: ""
+    account: ""
+    password: ""
+
+  # smtp:
+  #   username: ""
+  #   password: ""
+  #   host: ""
+  #   port: 0
+
+  session_secret: ""
+  backup_share: ""
+  backup_key: ""
+
+  ingress:
+    ## Ingress TLS configuration
+    ## Secrets must be manually created in the namespace
+    ##
+    auth:
+      tenantid: ""
+      app:
+        id: ""
+        secret: ""
+    tls:
+     secretName: "istio-ingress-certs"
+
+  # External ingress settings
+  ingress_ext:
+    ## Ingress annotations
+    ##
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      kubernetes.io/ingress.class: "istio"
+      ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.org/websocket-services: "cortex-corptax"
+
+    ## Ingress TLS configuration
+    ## Secrets must be manually created in the namespace
+    ##
+    tls:
+     secretName: "istio-ingress-certs"
+    #   - secretName: wordpress.local-tls
+    #     hosts:
+    #       - wordpress.local
+    #
+
+  # Internal  ingress settings
+  ingress_int:
+    ## Ingress annotations
+    ##
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      kubernetes.io/ingress.class: "nginx-int"
+      ingress.kubernetes.io/ssl-redirect: "true"
+
+    ## Ingress TLS configuration
+    ## Secrets must be manually created in the namespace
+    ##
+    tls:
+     secretName: "istio-ingress-certs-int"
+
+    #   - secretName: wordpress.local-tls
+    #     hosts:
+    #       - wordpress.local
+  ingress_metrics:
+    ## Ingress annotations
+    ##
+    annotations:
+      # type of authentication
+      # nginx.ingress.kubernetes.io/auth-type: basic
+      # # name of the secret that contains the user/password definitions
+      # nginx.ingress.kubernetes.io/auth-secret: basic-auth
+      # # message to display with an appropiate context why the authentication is required
+      # nginx.ingress.kubernetes.io/auth-realm: "Authentication Required - ask devops team"
+      kubernetes.io/tls-acme: "true"
+      kubernetes.io/ingress.class: "nginx-metrics"
+      ingress.kubernetes.io/ssl-redirect: "true"
+    tls:
+      secretName: "istio-ingress-certs-metrics"
+
+  ingress_restricted:
+    ## Ingress annotations
+    ##
+    annotations:
+      # type of authentication
+      ingress.kubernetes.io/auth-type: basic
+      # name of the secret that contains the user/password definitions
+      ingress.kubernetes.io/auth-secret: basic-auth
+      # message to display with an appropiate context why the authentication is required
+      ingress.kubernetes.io/auth-realm: "Authentication Required - ask devops team"
+      kubernetes.io/tls-acme: "true"
+      kubernetes.io/ingress.class: "nginx-restricted"
+      ingress.kubernetes.io/ssl-redirect: "true"
+    tls:
+      secretName: "istio-ingress-certs-restricted"
+
+
+## Configuration values for CorpTax corptax components.
+##
+corptax:
+  ## Override the components name (defaults to analytics-ui).
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## analytics-ui image.
+  ##
+  image: corptax
+
+  ## analytics_ui image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # analytics-ui http server listen port
+  httpPort: 3000
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+corptax_worker:
+  ## Override the components name (defaults to analytics-ui).
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## corptax_worker image.
+  ##
+  image: corptax
+
+  ## analytics_ui image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # analytics-ui http server listen port
+  httpPort: 3000
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+
+
+## Configuration values for Cortex analytics-ui components.
+##
+analytics_ui:
+  ## Override the components name (defaults to analytics-ui).
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## analytics-ui image.
+  ##
+  image: analytics-ui
+
+  ## analytics_ui image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "2000Mi"
+
+  # analytics-ui http server listen port
+  httpPort: 3000
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex tradechain-web components.
+##
+tradechain_web:
+  ## Override the components name (defaults to tradechain-web).
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 3
+
+  ## analytics-ui image.
+  ##
+  image: tradechain-web
+
+  ## analytics_ui image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # tradechain-web http server listen port
+  httpPort: 3000
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex tradechain-workpaper components.
+##
+tradechain_workpaper:
+  ## Override the components name (defaults to tradechain-web).
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 3
+
+  ## tradechain-workpaper image.
+  ##
+  image: tradechain-analytics-ui
+
+  ## analytics_ui image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # tradechain-workpaper http server listen port
+  httpPort: 3000
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex tradechain-worker components.
+#
+##
+tradechain_worker:
+  ## Override the components name (defaults to tradechain-worker).
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## analytics-worker image.
+  ##
+  image: tradechain-analytics-ui
+
+  ## tradechain_worker image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # tradechain-worker http server listen port
+  httpPort: 3000
+
+## Configuration values for Cortex analytics-worker components.
+#
+##
+analytics_worker:
+  ## Override the components name (defaults to analytics-worker).
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## analytics-worker image.
+  ##
+  image: analytics-ui
+
+  ## analytics_worker image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # analytics-worker http server listen port
+  httpPort: 3000
+
+
+## Configuration values for Cortex artifactory components.
+##
+artifactory:
+  ## Override the components name (defaults to artifactory)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  # replicas: 2
+
+  ## artifactory image.
+  ##
+  ## image: tableau-api
+
+  ## artifactory image version.
+  ##
+  ## imageTag: "1.1.2"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  ##resources:
+  ##  requests:
+  ##    cpu: "500m"
+  ##    memory: "500Mi"
+  ##  limits:
+  ##    cpu: "500m"
+  ##    memory: "500Mi"
+
+  # tableau http server listen port
+  httpPort: 80
+
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex auditlog components.
+#
+##
+auditlog:
+  ## Override the components name (defaults to auditlog).
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## auditlog image.
+  ##
+  image: auditlog-service
+
+  ## auditlog image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # auditlog http server listen port
+  httpPort: 40020
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex bundle components.
+#
+##
+bundle:
+  ## Override the components name (defaults to bundle)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 1
+
+  ## bundle image.
+  ##
+  image: bundle-service
+
+  ## bundle image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # bundle http server listen port
+  httpPort: 40006
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex client components.
+#
+##
+client:
+  ## Override the components name (defaults to client)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## client image.
+  ##
+  image: client-service
+
+  ## client image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # client http server listen port
+  httpPort: 40008
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex datarequest components.
+#
+##
+datarequest:
+  ## Override the components name (defaults to datarequest)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 1
+
+  ## datarequest image.
+  ##
+  image: datarequest-service
+
+  ## datarequest image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # datarequest http server listen port
+  httpPort: 40000
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex engagement components.
+#
+##
+engagement:
+  ## Override the components name (defaults to engagement)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## engagement image.
+  ##
+  image: engagement-service
+
+  ## engagement image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # engagement http server listen port
+  httpPort: 40012
+
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+
+broker:
+  ## Override the components name (defaults to engagement)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 1
+
+  ## broker image.
+  ##
+  image: broker-service
+
+  ## engagement image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # engagement http server listen port
+  httpPort: 40060
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex extraction-ui components.
+##
+extraction_ui:
+  ## Override the components name (defaults to extraction-ui).
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## extraction-ui image.
+  ##
+  image: extraction-ui
+
+  ## extraction_ui image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # extraction-ui http server listen port
+  httpPort: 3000
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex espresso components.
+##
+espresso:
+  ## Override the components name (defaults to espresso).
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## extraction-ui image.
+  ##
+  image: espresso
+
+  ## extraction_ui image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # espresso http server listen port
+  httpPort: 3000
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex informatica  components.
+##
+informatica:
+  ## Override the components name (defaults to informatica)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## informatica image.
+  ##
+  image: informatica-service
+
+  ## engagement image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # engagement http server listen port
+  httpPort: 40004
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+informatica_cloud:
+  ## Override the components name (defaults to informatica)
+  ##
+  # nameOverride:
+  cert: "must be set in key vault"
+
+  image: informatica-cloud
+
+  size: 1000Gi
+
+  storageClass: managed-premium
+
+  ## engagement image version.
+  ##
+  imageTag: "1.2.0"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+   requests:
+     cpu: "500m"
+     memory: "600Mi"
+   #limits:
+     #cpu: "500m"
+     #memory: "600Mi"
+
+  # engagement http server listen port
+  httpPort: 16006
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex notification components.
+##
+notification:
+  ## Override the components name (defaults to notification)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## notification image.
+  ##
+  image: notification-service
+
+  ## notification image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # notification http server listen port
+  httpPort: 40022
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex scheduler components.
+##
+scheduler:
+  ## Override the components name (defaults to scheduler)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  # ATTENTION: only 1 replica of scheduler service at time !!!
+  replicas: 1
+
+  ## scheduler image.
+  ##
+  image: scheduler-service
+
+  ## scheduler image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # scheduler http server listen port
+  httpPort: 40050
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex security components.
+##
+security:
+  ## Override the components name (defaults to security)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## security image.
+  ##
+  image: security-service
+
+  # for dm dev, load, qa = 90, for deloitte staging = 2
+  recertification: 90
+
+  ## security image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # security http server listen port
+  httpPort: 40016
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex sftp components.
+##
+sftp:
+  ## Override the components name (defaults to sftp)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## sftp image.
+  ##
+  image: sftp-service
+
+  ## security image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # sftp http server listen port
+  httpPort: 3000
+
+  # sftp ssh server listen port
+  sshPort: 4000
+
+  # sftp ssh server node port
+  sshNodePort: 32022
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: NodePort
+
+## Configuration values for Cortex staging components.
+##
+staging:
+  ## Override the components name (defaults to staging)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## staging image.
+  ##
+  image: staging-service
+
+  ## staging image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "8000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "8000Mi"
+
+  # staging http server listen port
+  httpPort: 40021
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex tableu-api components.
+##
+tableau_api:
+  ## Override the components name (defaults to tableau_api)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## tableau_api image.
+  ##
+  image: tableau-api
+
+  ## tableau_api image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+  # tableau_api http server listen port
+  httpPort: 5000
+
+## Configuration values for Cortex tableu components.
+##
+tableau:
+  ## Override the components name (defaults to tableau_api)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  # replicas: 2
+
+  ## tableau_api image.
+  ##
+  ## image: tableau-api
+
+  ## tableau_api image version.
+  ##
+  ## imageTag: "1.1.2"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  ##resources:
+  ##  requests:
+  ##    cpu: "500m"
+  ##    memory: "500Mi"
+  ##  limits:
+  ##    cpu: "500m"
+  ##    memory: "500Mi"
+
+  # tableau http server listen port
+  httpPort: 80
+
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for Cortex workpaper components.
+##
+workpaper:
+  ## Override the components name (defaults to workpaper)
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## workpaper image.
+  ##
+  image: workpaper-service
+
+  ## notification image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1000Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # workpaper http server listen port
+  httpPort: 40013
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+## Configuration values for SAP-Service components.
+##
+sap:
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## sap-service image.
+  ##
+  image: sap-service
+
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ##
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "700Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # spa-service listen ports
+  appHttpPort: 8051
+  appHttpsPort: 8443
+  adminHttpPort: 8052
+  adminHttpsPort: 8444
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+# mongo:
+#   ## Number of replicas.
+#   ##
+#   replicas: 2
+#
+#   resources:
+#     requests:
+#       cpu: "300m"
+#       memory: "700Mi"
+#     limits:
+#       cpu: "1000m"
+#       memory: "1000Mi"
+
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+redis:
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "700Mi"
+    limits:
+      cpu: "1000m"
+      memory: "2000Mi"
+
+## Configuration values for prep-orchestrator component.
+#
+##
+prep_orchestrator:
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  image: prep-orchestrator-service
+
+  ## prep-orchestrator image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "700Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  # prep-orchestrator http server listen port
+  httpPort: 40022
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+
+  spark_conf:
+    path: "cortex/rscript-silo"
+  spark_download_conf:
+    path: "cortex/download-files"
+
+  metrics_config:
+    basic_auth: ""
+
+  scaling_config:
+    upscale_percentage: 110
+    upscale_by_factor_of: 1
+    downscale_percentage: 30
+    downscale_target_instance_count: 7
+    downsize_by_factor_of: 0.9
+
+# omsagent
+omsagent:
+  ## Override the components name (defaults to analytics-worker).
+  ##
+  # nameOverride:
+
+  # For monitoring
+  wsid: ""
+  key: ""
+  # End for monitoring
+
+jobserver_ui:
+  ## Number of replicas.
+  ##
+  replicas: 1
+
+  username: "test"
+  password: "test123"
+
+  # actual image is passed with --set and different for every env
+  image: jobserver-ui-cortex
+
+  ## spark-ssh image version.
+  ##
+  imageTag: "latest"
+
+  # spark-ssh server listen port
+  mainPort: 8085
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "7000Mi"
+    # limits:
+    #   cpu: "1000m"
+    #   memory: "7000Mi"
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: NodePort
+
+  jar_version: "0.1.30"
+
+## Configuration values for fluentd DaemonSet
+#
+##
+## Configuration values for nginx component.
+#
+##
+nginx:
+  ## Number of replicas.
+  ##
+  replicas: 1
+
+  image: nginx
+
+  ## nginx image version.
+  ##
+  imageTag: "1.13.7"
+
+  ## Configure resource requests and limits.
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "300Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1000Mi"
+
+  httpPort: 80
+  httpsPort: 443
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: LoadBalancer
+
+## Configuration values for Cortex analytics-ui components.
+##
+factiva:
+  ## Override the components name (defaults to analytics-ui).
+  ##
+  # nameOverride:
+
+  ## Number of replicas.
+  ##
+  replicas: 2
+
+  ## analytics-ui image.
+  ##
+  image: factiva
+
+  ## factiva image version.
+  ##
+  imageTag: "notag"
+
+  ## Configure resource requests and limits.
+  ##
+  resources:
+   requests:
+     cpu: "200m"
+     memory: "500Mi"
+   limits:
+     cpu: "1000m"
+     memory: "1000Mi"
+
+  # factiva http server listen port
+  httpPort: 3000
+
+  ## Service configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+oauth2:
+  service:
+    ## For minikube, set this to ClusterIP, elsewhere use LoadBalancer.
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    ##
+    type: ClusterIP
+  image: oauth2-proxy
+  imageTag: "0.1.5"

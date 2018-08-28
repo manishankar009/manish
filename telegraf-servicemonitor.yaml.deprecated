@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kube-prometheus-exporter-telegraf
+  namespace: metrics
+  labels:
+    component: kube-telegraf
+    prometheus: kube-prometheus
+spec:
+  endpoints:
+  - port: metrics
+    bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    interval: 15s
+  jobLabel: kube-prometheus-exporter-telegraf
+  namespaceSelector:
+    matchNames:
+    - metrics
+  selector:
+    matchLabels:
+      app: telegraf-s-telegraf-s
