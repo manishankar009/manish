@@ -1,0 +1,13 @@
+charts/
+.idea
+nginx-ingress-0.3.2.tgz
+nginx-ingress-ext.yaml
+nginx-ingress-ext-expose-port.yaml
+nginx-ingress-int.yaml
+nginx-ingress-metrics.yaml
+nginx-ingress-restricted.yaml
+nginx-ingress-metrics.yaml
+secrets.yaml
+telegraf-s.yaml
+helm.sh
+/.vs

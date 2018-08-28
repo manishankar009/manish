@@ -1,0 +1,69 @@
+controller:
+  kind: DaemonSet
+
+  image:
+    repository: quay.io/kubernetes-ingress-controller/nginx-ingress-controller
+    tag: 0.15.0
+
+  ## Name of the ingress class to route through this controller
+  ingressClass: nginx-restricted
+
+  ## Node labels for controller pod assignment
+  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+  ##
+  #nodeSelector:
+  #  role: agent
+
+  # Required for use with CNI based kubernetes installations (such as ones set up by kubeadm),
+  # since CNI and hostport don't mix yet. Can be deprecated once https://github.com/kubernetes/kubernetes/issues/23920
+  # is merged
+  hostNetwork: false
+
+  ## nginx ConfigMap entries
+  config:
+    proxy-connect-timeout: "7200"
+    proxy-read-timeout: "7200"
+    proxy-send-timeout: "7200"
+    hsts-include-subdomains: "false"
+    keep-alive: "7200"
+    keep-alive-requests: "7200"
+    body-size: "2048m"
+    proxy-body-size: "2048m"
+    server-name-hash-bucket-size: "256"
+    hide-headers: "x-powered-by"
+    server-tokens: "false"
+    worker-processes: "4"
+
+  #resources:
+    #requests:
+      #cpu: 100m
+      #memory: 128Mi
+    #limits:
+      #cpu: 100m
+      #memory: 128Mi
+
+  service:
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-internal: "__LB_TYPE__"
+    loadBalancerIP: __LB_IP__
+
+## TCP service key:value pairs
+# Ref: https://github.com/kubernetes/contrib/tree/master/ingress/controllers/nginx/examples/tcp
+##
+#tcp:
+#  20022: "default/deloitte-cortex-dev-sftp:20022"
+27017: "default/cortex-mongo-read:27017"
+
+## Default 404 backend
+##
+defaultBackend:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 20Mi
+    limits:
+      cpu: 10m
+      memory: 20Mi
+
+# rbac:
+#   create: true

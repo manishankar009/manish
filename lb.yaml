@@ -1,0 +1,6 @@
+## Use internal load balancer for nginx-ingress service
+nginx-ingress:
+  controller:
+    service:
+      annotations:
+        service.beta.kubernetes.io/azure-load-balancer-internal: "true"

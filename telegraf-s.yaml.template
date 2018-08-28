@@ -1,0 +1,112 @@
+## Default values.yaml for Telegraf
+## This is a YAML-formatted file.
+## ref: https://hub.docker.com/r/library/telegraf/tags/
+image:
+  repo: "telegraf"
+  tag: "1.3-alpine"
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 0.1
+  limits:
+    memory: 2Gi
+    cpu: 1
+
+## Configure the service for this telegraf instance. If you are running
+## Any of the service plugins you will need this enabled
+## Service Plugins: http_listener, statsd, tcp_listener, udp_listener
+## ref: http://kubernetes.io/docs/user-guide/services/
+service:
+  expose_port: 9273
+  enabled: true
+  type: ClusterIP
+
+## Exposed telegraf configuration
+## For full list of possible values see `/docs/all-config-values.yaml` and `/docs/all-config-values.toml`
+## ref: https://docs.influxdata.com/telegraf/v1.1/administration/configuration/
+
+config:
+##    global_tags:
+##      dc: "us-east-1"
+##      user: "$USER"
+  agent:
+    interval: "10s"
+    round_interval: true
+    metric_batch_size: 1000
+    metric_buffer_limit: 10000
+    collection_jitter: "5s"
+    flush_interval: "10s"
+    flush_jitter: "5s"
+    precision: ""
+    debug: false
+    quiet: false
+    logfile: ""
+    hostname: "telegraf-polling-service"
+    omit_hostname: false
+  outputs:
+    socket_writer:
+      address: "tcp://oms-exporter:25226"
+      data_format: "json"
+    influxdb:
+      urls:
+        - "http://influxdb-influxdb:8086"
+      database: "telegraf"
+      timeout: "30s"
+    prometheus_client:
+      listen: ":9273"
+      expiration_interval: "60s"
+
+# CPU and System is required for chronograf
+# This may show errors in the logs, but this does not affect performance or functionality
+  inputs:
+    cpu:
+      percpu: false
+      totalcpu: true
+    system:
+    mongodb:
+      servers:
+        - "mongodb://siteRootAdmin:_MONGO_PASSWORD_@cortex-mongo-0.cortex-mongo.default:27017/admin"
+        - "mongodb://siteRootAdmin:_MONGO_PASSWORD_@cortex-mongo-1.cortex-mongo.default:27017/admin"
+        - "mongodb://siteRootAdmin:_MONGO_PASSWORD_@cortex-mongo-2.cortex-mongo.default:27017/admin"
+      gather_perdb_stats: true
+    influxdb:
+      urls:
+        - "http://influxdb-influxdb:8086/debug/vars"
+      timeout: "5s"
+    mysql:
+      servers:
+        - "root:_MYSQL_PASSWORD_@tcp(cortex-mysql-0.cortex-mysql.default:3306)/?tls=false"
+      perf_events_statements_digest_text_limit : 120
+      perf_events_statements_limit: 250
+      perf_events_statements_time_limit        : 86400
+      table_schema_databases: []
+      gather_table_schema: false
+      gather_process_list: true
+      gather_info_schema_auto_inc: true
+      gather_slave_status: true
+      gather_binary_logs: false
+      gather_table_io_waits: false
+      gather_table_lock_waits: false
+      gather_index_io_waits: false
+      gather_event_waits: false
+      gather_file_events_stats: false
+      gather_perf_events_statements: false
+      interval_slow: "30m"
+    rabbitmq:
+      url: "http://cortex-rabbit.default:15672"
+      name: "rmq-server-1"
+      username: "admin"
+      password: "_RABBIT_PASSWORD_"
+      # ssl_ca: "/etc/telegraf/ca.pem"
+      # ssl_cert: "/etc/telegraf/cert.pem"
+      # ssl_key: "/etc/telegraf/key.pem"
+      # insecure_skip_verify: false
+      # nodes:
+      #   - "rabbit@node1"
+      #   - "rabbit@node2"
+    redis:
+      servers:
+        - "tcp://:_REDIS_PASSWORD_@cortex-redis.default:6379"
+percentile_limit: 1000

@@ -1,0 +1,8 @@
+## Use nodeport for nginx-ingress service
+nginx-ingress:
+  controller:
+    service:
+      type: NodePort
+      nodePorts:
+        http: 32080
+        https: 32443
