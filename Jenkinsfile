@@ -1,12 +1,25 @@
-Jenkinsfile (Declarative Pipeline)
 pipeline {
-    agent {
-        docker { image 'node:7-alpine' }
-    }
+    agent any 
     stages {
-        stage('Test') {
+        stage('Compile Stage') { 
             steps {
-                sh 'node --version'
+                withMaven(maven : 'maven_3_5_4'){
+                    sh 'mvn clean compile'
+                } 
+            }
+        }
+       stage('Testing Stage') { 
+            steps {
+                withMaven(maven : 'maven_3_5_4'){
+                    sh 'mvn test'
+                } 
+            }
+        }
+        stage('Deploywment Stage') { 
+            steps {
+                withMaven(maven : 'maven_3_5_4'){
+                    sh 'mvn deploy'
+                } 
             }
         }
     }
